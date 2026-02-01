@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Million zlotowka homepage</title>
+
+    <style>
+        body {
+            background: #f0f0f0;
+            font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #99ccff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: normal;
+        }
+
+        header small {
+            font-size: 14px;
+            color: #222;
+        }
+
+        nav {
+            background: #e0e0e0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        nav button {
+            background: #fff;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 5px rgba(0,0,0,0.1);
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+        }
+
+        nav button:hover {
+            background: #dcdcdc;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .activeTab {
+            background: #ffcccc !important;
+            border-color: #cc6666 !important;
+        }
+
+        .section {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        canvas {
+            border: 2px solid #aaa;
+            background: #fff;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .controls input[type="color"],
+        .controls input[type="file"],
+        .controls button {
+            background: #fff;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+        }
+
+        .controls button:hover {
+            background: #dcdcdc;
+        }
+
+        .active {
+            background: #ffcccc !important;
+            border-color: #cc6666 !important;
+<link rel="icon" type="image/png" href="kotel.png?v=2">
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>The Million zlotowka homepage<br><small>made by czubek10</small></h1>
+</header>
+
+<nav>
+    <button onclick="showSection('editor')" id="tab-editor" class="activeTab">PIXEL EDITOR</button>
+    <button onclick="showSection('kup')" id="tab-kup">chcesz kupic swój teren?</button>
+    <button onclick="showSection('historia')" id="tab-historia">pozdrowienia oraz historia</button>
+    <button onclick="showSection('social')" id="tab-social">social media</button>
+</nav>
+
+<!-- SEKCJA 1: EDYTOR -->
+<div id="editor" class="section" style="display:block;">
+    <h2>PIXELE • RYSUNKI • OBRAZKI</h2>
+
+    <canvas id="pixelCanvas" width="1000" height="1000"></canvas>
+
+    <div class="controls">
+        <input type="color" id="colorPicker" value="#ff0000">
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="imageModeBtn">TRYB OBRAZKA: OFF</button>
+        <button id="eraserBtn">GUMKA: OFF</button>
+    </div>
+</div>
+
+<!-- SEKCJA 2: KUP TEREN -->
+<div id="kup" class="section">
+    <h2>Kup swój teren</h2>
+    <p>Niewiem jak narazie pierwsze etapy nie ma nie bylo i nie bedzie.</p>
+</div>
+
+<!-- SEKCJA 3: HISTORIA -->
+<div id="historia" class="section">
+    <h2>historia? historii to nie ma bo ma to dopiero 2 godziny w czasie wtedy kiedy to akurat pisalem historia to to moze byc za dopiero moze 2-3 lata oraz pozdrawiam Stachu,Qwoyko,sraniewbanie333,Windowsek11 za te 3 lata znajomosci,serwer Cyganowice i polonie za bana na miesiac :*,rodzine, cygana za swoje memy,Copilota za pomoc w drobnych problemach,turkow z bd za dobre kebaby i innych znajomych </h2>
+    <p>.</p>
+</div>
+
+<!-- SEKCJA 4: SOCIAL MEDIA -->
+<div id="social" class="section">
+    <h2>Social media</h2>
+    <p>Discord:polonez_sila_narodu i wsumie narazie tyle.</p>
+</div>
+
+<script>
+    function showSection(name) {
+        document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+        document.getElementById(name).style.display = 'block';
+
+        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('activeTab'));
+        document.getElementById('tab-' + name).classList.add('activeTab');
+    }
+
+    const canvas = document.getElementById("pixelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const colorPicker = document.getElementById("colorPicker");
+    const imageInput = document.getElementById("imageInput");
+    const eraserBtn = document.getElementById("eraserBtn");
+    const imageModeBtn = document.getElementById("imageModeBtn");
+
+    let currentColor = colorPicker.value;
+    let uploadedImage = null;
+
+    let eraserMode = false;
+    let imageMode = false;
+
+    const paintBlockSize = 5;
+    const imageBlockWidth = 70;
+    const imageBlockHeight = 40;
+
+    let placedItems = [];
+
+    colorPicker.addEventListener("input", () => {
+        currentColor = colorPicker.value;
+    });
+
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            uploadedImage = new Image();
+            uploadedImage.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    imageModeBtn.addEventListener("click", () => {
+        imageMode = !imageMode;
+        imageModeBtn.textContent = imageMode ? "TRYB OBRAZKA: ON" : "TRYB OBRAZKA: OFF";
+        imageModeBtn.classList.toggle("active");
+    });
+
+    eraserBtn.addEventListener("click", () => {
+        eraserMode = !eraserMode;
+        eraserBtn.textContent = eraserMode ? "GUMKA: ON" : "GUMKA: OFF";
+        eraserBtn.classList.toggle("active");
+    });
+
+    function save() {
+        localStorage.setItem("millionPage", JSON.stringify(placedItems));
+    }
+
+    function redrawAll() {
+        ctx.clearRect(0, 0, 1000, 1000);
+
+        placedItems.forEach(item => {
+            if (item.type === "pixel") {
+                ctx.fillStyle = item.color;
+                ctx.fillRect(item.x, item.y, paintBlockSize, paintBlockSize);
+            } else if (item.type === "image") {
+                const img = new Image();
+                img.src = item.src;
+                img.onload = () => {
+                    ctx.drawImage(img, item.x, item.y, imageBlockWidth, imageBlockHeight);
+                };
+            }
+        });
+    }
+
+    function load() {
+        const saved = localStorage.getItem("millionPage");
+        if (!saved) return;
+
+        placedItems = JSON.parse(saved);
+        redrawAll();
+    }
+
+    load();
+
+    canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const rawX = Math.floor(event.clientX - rect.left);
+        const rawY = Math.floor(event.clientY - rect.top);
+
+        if (eraserMode) {
+            placedItems = placedItems.filter(item => {
+                if (item.type === "pixel") {
+                    return !(
+                        rawX >= item.x &&
+                        rawX < item.x + paintBlockSize &&
+                        rawY >= item.y &&
+                        rawY < item.y + paintBlockSize
+                    );
+                }
+
+                if (item.type === "image") {
+                    return !(
+                        rawX >= item.x &&
+                        rawX < item.x + imageBlockWidth &&
+                        rawY >= item.y &&
+                        rawY < item.y + imageBlockHeight
+                    );
+                }
+
+                return true;
+            });
+
+            redrawAll();
+            save();
+            return;
+        }
+
+        if (imageMode && uploadedImage) {
+            const x = Math.floor(rawX / imageBlockWidth) * imageBlockWidth;
+            const y = Math.floor(rawY / imageBlockHeight) * imageBlockHeight;
+
+            const img = new Image();
+            img.src = uploadedImage.src;
+            img.onload = () => {
+                ctx.drawImage(img, x, y, imageBlockWidth, imageBlockHeight);
+            };
+
+            placedItems.push({
+                type: "image",
+                x, y,
+                src: uploadedImage.src
+            });
+
+            save();
+            return;
+        }
+
+        const x = Math.floor(rawX / paintBlockSize) * paintBlockSize;
+        const y = Math.floor(rawY / paintBlockSize) * paintBlockSize;
+
+        ctx.fillStyle = currentColor;
+        ctx.fillRect(x, y, paintBlockSize, paintBlockSize);
+
+        placedItems.push({
+            type: "pixel",
+            x, y,
+            color: currentColor
+        });
+
+        save();
+    });
+</script>
+
+</body>
+</html>
